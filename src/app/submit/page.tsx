@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { ROUTES } from '@/lib/constants/routes'
 import { CostEntryForm } from './cost-entry-form'
 
 export const metadata = {
@@ -6,11 +7,11 @@ export const metadata = {
 	description: 'Okul maliyet verinizi anonim olarak paylaşın.',
 }
 
-export default function VeriGirPage() {
+export default function SubmitCostPage() {
 	return (
 		<main className="min-h-screen p-4 md:p-8">
 			<Link
-				href="/"
+				href={ROUTES.HOME}
 				className="mb-6 inline-block text-sm text-blue-600 hover:underline"
 			>
 				← Ana sayfa

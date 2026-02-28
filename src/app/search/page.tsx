@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { ROUTES } from '@/lib/constants/routes'
 import { SchoolSearch } from './school-search'
 
 export const metadata = {
@@ -7,7 +8,7 @@ export const metadata = {
 	description: 'İl, ilçe ve okul adına göre özel okul maliyetlerini karşılaştırın.',
 }
 
-export default async function AramPage() {
+export default async function SearchPage() {
 	const supabase = await createClient()
 
 	const { data: cityRows } = await supabase
@@ -19,7 +20,7 @@ export default async function AramPage() {
 	return (
 		<main className="min-h-screen p-4 md:p-8">
 			<Link
-				href="/"
+				href={ROUTES.HOME}
 				className="mb-6 inline-block text-sm text-blue-600 hover:underline"
 			>
 				← Ana sayfa

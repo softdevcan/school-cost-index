@@ -1,7 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import { submitCostEntryForm } from './actions'
+
+const MapPicker = dynamic(
+	() => import('@/components/map/map-picker').then((m) => ({ default: m.MapPicker })),
+	{ ssr: false }
+)
 
 const SCHOOL_TYPES = [
 	{ value: 'kindergarten', label: 'Anaokulu' },
@@ -17,6 +23,8 @@ export function CostEntryForm() {
 	const [referenceCode, setReferenceCode] = useState<string | null>(null)
 	const [errors, setErrors] = useState<Record<string, string[]>>({})
 	const [isSubmitting, setIsSubmitting] = useState(false)
+	const [latitude, setLatitude] = useState<number | null>(null)
+	const [longitude, setLongitude] = useState<number | null>(null)
 
 	async function handleSubmit(formData: FormData) {
 		setIsSubmitting(true)
@@ -100,6 +108,42 @@ export function CostEntryForm() {
 						<p className="mt-1 text-sm text-red-600">{errors.district[0]}</p>
 					)}
 				</div>
+			</div>
+
+			<div>
+				<label htmlFor="address" className="block text-sm font-medium">
+					Adres / Konum (Opsiyonel)
+				</label>
+				<input
+					id="address"
+					name="address"
+					type="text"
+					className="mt-1 w-full rounded border px-3 py-2"
+					placeholder="Mahalle, sokak, bina no"
+				/>
+				{errors.address && (
+					<p className="mt-1 text-sm text-red-600">{errors.address[0]}</p>
+				)}
+			</div>
+
+			<div>
+				<label className="block text-sm font-medium mb-1">
+					Haritadan Konum Seç (Opsiyonel)
+				</label>
+				<p className="text-xs text-gray-500 mb-2">
+					Haritada okulun konumuna tıklayın
+				</p>
+				<MapPicker
+					latitude={latitude}
+					longitude={longitude}
+					onChange={(lat, lng) => {
+						setLatitude(lat)
+						setLongitude(lng)
+					}}
+					className="mt-1"
+				/>
+				<input type="hidden" name="latitude" value={latitude ?? ''} />
+				<input type="hidden" name="longitude" value={longitude ?? ''} />
 			</div>
 
 			<div>

@@ -9,6 +9,9 @@ CREATE TABLE schools (
 	name TEXT NOT NULL,
 	city TEXT NOT NULL,
 	district TEXT NOT NULL,
+	address TEXT,
+	latitude NUMERIC(10, 7),
+	longitude NUMERIC(10, 7),
 	type TEXT CHECK (type IN ('kindergarten', 'primary', 'middle', 'high')),
 	created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -32,6 +35,7 @@ CREATE TABLE costs (
 CREATE INDEX idx_schools_city ON schools(city);
 CREATE INDEX idx_schools_district ON schools(district);
 CREATE INDEX idx_schools_type ON schools(type);
+CREATE INDEX idx_schools_location ON schools(latitude, longitude) WHERE latitude IS NOT NULL;
 CREATE INDEX idx_costs_school_id ON costs(school_id);
 CREATE INDEX idx_costs_verified ON costs(is_verified);
 CREATE INDEX idx_costs_reference ON costs(reference_code);
@@ -45,6 +49,10 @@ CREATE POLICY "Public read schools" ON schools FOR SELECT USING (true);
 
 -- Herkes okul ekleyebilir (anon)
 CREATE POLICY "Public insert schools" ON schools FOR INSERT WITH CHECK (true);
+
+-- Adres güncellemesi (mevcut okul kayıtlarını zenginleştirmek için)
+CREATE POLICY "Public update schools" ON schools FOR UPDATE
+	USING (true) WITH CHECK (true);
 
 -- Sadece onaylı maliyet verileri görülebilir
 CREATE POLICY "Public read verified costs" ON costs FOR SELECT USING (is_verified = true);

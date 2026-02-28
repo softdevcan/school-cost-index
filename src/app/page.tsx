@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { ROUTES } from '@/lib/constants/routes'
 
 export default function HomePage() {
 	return (
@@ -14,13 +15,13 @@ export default function HomePage() {
 
 			<nav className="mx-auto flex max-w-md flex-col gap-4 sm:flex-row sm:justify-center">
 				<Link
-					href="/arama"
+					href={ROUTES.SEARCH}
 					className="rounded-lg border border-gray-200 bg-white px-6 py-3 text-center font-medium transition hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-900 dark:hover:bg-gray-800"
 				>
 					Okul Ara
 				</Link>
 				<Link
-					href="/veri-gir"
+					href={ROUTES.SUBMIT}
 					className="rounded-lg bg-blue-600 px-6 py-3 text-center font-medium text-white transition hover:bg-blue-700"
 				>
 					Veri Paylaş

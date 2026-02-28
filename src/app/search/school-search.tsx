@@ -1,14 +1,23 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/client'
 import { filterOutliers } from '@/lib/utils/statistics'
+
+const SchoolMap = dynamic(
+	() => import('@/components/map/school-map').then((m) => ({ default: m.SchoolMap })),
+	{ ssr: false }
+)
 
 interface SchoolWithCosts {
 	id: string
 	name: string
 	city: string
 	district: string
+	address: string | null
+	latitude: number | null
+	longitude: number | null
 	type: string
 	avg_tuition: number
 	avg_total: number
@@ -22,6 +31,8 @@ const TYPE_LABELS: Record<string, string> = {
 	high: 'Lise',
 }
 
+type ViewMode = 'list' | 'map'
+
 export function SchoolSearch({ cities }: { cities: string[] }) {
 	const [city, setCity] = useState('')
 	const [district, setDistrict] = useState('')
@@ -29,6 +40,7 @@ export function SchoolSearch({ cities }: { cities: string[] }) {
 	const [districtOptions, setDistrictOptions] = useState<string[]>([])
 	const [results, setResults] = useState<SchoolWithCosts[]>([])
 	const [isLoading, setIsLoading] = useState(false)
+	const [viewMode, setViewMode] = useState<ViewMode>('list')
 
 	const supabase = createClient()
 
@@ -63,14 +75,23 @@ export function SchoolSearch({ cities }: { cities: string[] }) {
 				food_fee,
 				book_fee,
 				uniform_fee,
-				schools!inner(id, name, city, district, type)
+				schools!inner(id, name, city, district, address, latitude, longitude, type)
 			`
 			)
 			.eq('is_verified', true)
 
 		const { data: costData } = await costQuery
 
-		type SchoolInfo = { id: string; name: string; city: string; district: string; type: string }
+		type SchoolInfo = {
+			id: string
+			name: string
+			city: string
+			district: string
+			address: string | null
+			latitude: number | null
+			longitude: number | null
+			type: string
+		}
 		type CostRow = {
 			tuition_fee: number
 			food_fee: number | null
@@ -103,7 +124,16 @@ export function SchoolSearch({ cities }: { cities: string[] }) {
 		const schoolsMap = new Map<
 			string,
 			{
-				school: { id: string; name: string; city: string; district: string; type: string }
+				school: {
+					id: string
+					name: string
+					city: string
+					district: string
+					address: string | null
+					latitude: number | null
+					longitude: number | null
+					type: string
+				}
 				totals: number[]
 				tuitions: number[]
 			}
@@ -148,6 +178,9 @@ export function SchoolSearch({ cities }: { cities: string[] }) {
 				name: school.name,
 				city: school.city,
 				district: school.district,
+				address: school.address ?? null,
+				latitude: school.latitude ?? null,
+				longitude: school.longitude ?? null,
 				type: school.type,
 				avg_tuition: Math.round(avgTuition),
 				avg_total: Math.round(avgTotal),
@@ -224,7 +257,40 @@ export function SchoolSearch({ cities }: { cities: string[] }) {
 
 			{results.length > 0 && (
 				<div className="space-y-4">
-					<h2 className="text-lg font-semibold">Sonuçlar ({results.length})</h2>
+					<div className="flex flex-wrap items-center justify-between gap-2">
+						<h2 className="text-lg font-semibold">Sonuçlar ({results.length})</h2>
+						<div className="flex gap-2">
+							<button
+								type="button"
+								onClick={() => setViewMode('list')}
+								className={`rounded px-3 py-1 text-sm font-medium ${
+									viewMode === 'list'
+										? 'bg-blue-600 text-white'
+										: 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300'
+								}`}
+							>
+								Liste
+							</button>
+							<button
+								type="button"
+								onClick={() => setViewMode('map')}
+								className={`rounded px-3 py-1 text-sm font-medium ${
+									viewMode === 'map'
+										? 'bg-blue-600 text-white'
+										: 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300'
+								}`}
+							>
+								Harita
+							</button>
+						</div>
+					</div>
+					{viewMode === 'map' && (
+						<SchoolMap
+							schools={results}
+							className="mt-2"
+						/>
+					)}
+					{viewMode === 'list' && (
 					<div className="space-y-3">
 						{results.map((s) => (
 							<div
@@ -237,6 +303,9 @@ export function SchoolSearch({ cities }: { cities: string[] }) {
 										<p className="text-sm text-gray-500">
 											{s.district}, {s.city} · {TYPE_LABELS[s.type] ?? s.type}
 										</p>
+										{s.address && (
+											<p className="mt-1 text-xs text-gray-400">{s.address}</p>
+										)}
 									</div>
 									<div className="text-right">
 										<p className="text-lg font-semibold">
@@ -250,6 +319,7 @@ export function SchoolSearch({ cities }: { cities: string[] }) {
 							</div>
 						))}
 					</div>
+					)}
 				</div>
 			)}
 		</form>

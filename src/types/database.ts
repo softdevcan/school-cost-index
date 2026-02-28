@@ -5,6 +5,9 @@ export interface School {
 	name: string
 	city: string
 	district: string
+	address: string | null
+	latitude: number | null
+	longitude: number | null
 	type: SchoolType
 	created_at: string
 }

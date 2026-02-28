@@ -33,14 +33,53 @@
 - `NEXT_PUBLIC_SUPABASE_URL` – Supabase proje URL
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` – Supabase anon key
 
-**Deploy (Vercel):**
-- `VERCEL_TOKEN` – Vercel hesabından alınır (Settings > Tokens)
-- `VERCEL_ORG_ID` – `vercel link` veya proje ayarlarından
-- `VERCEL_PROJECT_ID` – `vercel link` veya proje ayarlarından
+**Deploy (VDS):**
+- `SSH_HOST` – VDS IP veya hostname
+- `SSH_USER` – SSH kullanıcı adı
+- `SSH_PRIVATE_KEY` – SSH private key (tüm içerik)
+- `DEPLOY_PATH` – (opsiyonel) Proje dizini, varsayılan: `~/school-cost-index`
 
-### Alternatif: Vercel GitHub Entegrasyonu
+### VDS İlk Kurulum
 
-Vercel Dashboard üzerinden repo bağlandığında otomatik deploy yapılır. Bu durumda `deploy.yml` workflow'unu devre dışı bırakabilir veya silebilirsiniz.
+1. VDS'de Node.js 22+ ve PM2 kurun:
+   ```bash
+   curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+   sudo apt install -y nodejs
+   sudo npm install -g pm2
+   ```
+
+2. Projeyi klonlayın (private repo için: VDS'e deploy key ekleyin veya HTTPS + token):
+   ```bash
+   git clone https://github.com/KULLANICI/school-cost-index.git ~/school-cost-index
+   cd ~/school-cost-index
+   cp .env.example .env.local
+   # .env.local düzenleyin (NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY)
+   ```
+
+3. İlk çalıştırma:
+   ```bash
+   npm ci && npm run build
+   pm2 start ecosystem.config.cjs
+   pm2 save && pm2 startup
+   ```
+
+4. Nginx reverse proxy (detay: `nginx/README.md`):
+   ```bash
+   sudo apt install -y nginx
+   sudo ln -s $(pwd)/nginx/school-cost-index.conf /etc/nginx/sites-enabled/
+   # Domain'i config'de güncelleyin (okulmaliyet.com → kendi domain)
+   sudo nginx -t && sudo systemctl reload nginx
+   ```
+   SSL için: `sudo certbot --nginx -d yourdomain.com`
+
+5. GitHub Actions deploy için: Repo Settings → Secrets → `SSH_HOST`, `SSH_USER`, `SSH_PRIVATE_KEY` ekleyin.
+   - Yeni key pair oluşturun: `ssh-keygen -t ed25519 -f deploy_key -N ""`
+   - `deploy_key.pub` içeriğini VDS'de `~/.ssh/authorized_keys` dosyasına ekleyin
+   - `deploy_key` (private) içeriğini GitHub Secrets → `SSH_PRIVATE_KEY` olarak ekleyin
+
+## Nginx
+
+`nginx/` klasöründe reverse proxy config'leri bulunur. Domain adını config dosyalarında güncellemeyi unutmayın.
 
 ## Doğrulama (Verification)
 

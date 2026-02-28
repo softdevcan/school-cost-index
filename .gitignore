@@ -8,6 +8,8 @@ node_modules
 out
 dist
 build
+.turbo
+*.tsbuildinfo
 
 # Env
 .env
@@ -35,5 +37,13 @@ Thumbs.db
 coverage
 .nyc_output
 
+# Cache
+.cache
+.parcel-cache
+.swc
+
 # Vercel
 .vercel
+
+# PM2
+.pm2

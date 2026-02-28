@@ -35,4 +35,6 @@
 ## Naming
 - Components: PascalCase
 - Files: kebab-case (e.g., cost-entry-form.tsx)
+- Folders/files: English only (no Turkish in paths)
 - Turkish UI labels; English code/comments
+- Routes: Use ROUTES constant from @/lib/constants/routes

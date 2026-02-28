@@ -5,10 +5,18 @@ import { nanoid } from 'nanoid'
 import { costEntrySchema, type CostEntryInput } from '@/lib/validations/cost'
 
 function parseFormData(formData: FormData): CostEntryInput {
+	const addressVal = formData.get('address') as string
+	const latVal = formData.get('latitude') as string
+	const lngVal = formData.get('longitude') as string
+	const lat = latVal ? parseFloat(latVal) : null
+	const lng = lngVal ? parseFloat(lngVal) : null
 	return {
 		school_name: formData.get('school_name') as string,
 		city: formData.get('city') as string,
 		district: formData.get('district') as string,
+		address: addressVal?.trim() || null,
+		latitude: lat != null && !Number.isNaN(lat) ? lat : null,
+		longitude: lng != null && !Number.isNaN(lng) ? lng : null,
 		school_type: formData.get('school_type') as CostEntryInput['school_type'],
 		academic_year: formData.get('academic_year') as string,
 		grade_level: parseInt(formData.get('grade_level') as string, 10),
@@ -32,7 +40,18 @@ export async function submitCostEntry(data: CostEntryInput) {
 	}
 
 	const supabase = await createClient()
-	const { school_name, city, district, school_type, ...costData } = parsed.data
+	const { school_name, city, district, address, latitude, longitude, school_type, ...costData } =
+		parsed.data
+
+	const schoolPayload = {
+		name: school_name,
+		city,
+		district,
+		address: address ?? null,
+		latitude: latitude ?? null,
+		longitude: longitude ?? null,
+		type: school_type,
+	}
 
 	// Find or create school
 	const { data: existingSchool } = await supabase
@@ -48,15 +67,20 @@ export async function submitCostEntry(data: CostEntryInput) {
 
 	if (existingSchool) {
 		schoolId = existingSchool.id
+		if (address || latitude != null || longitude != null) {
+			await supabase
+				.from('schools')
+				.update({
+					address: schoolPayload.address,
+					latitude: schoolPayload.latitude,
+					longitude: schoolPayload.longitude,
+				})
+				.eq('id', schoolId)
+		}
 	} else {
 		const { data: newSchool, error: schoolError } = await supabase
 			.from('schools')
-			.insert({
-				name: school_name,
-				city,
-				district,
-				type: school_type,
-			})
+			.insert(schoolPayload)
 			.select('id')
 			.single()
 
