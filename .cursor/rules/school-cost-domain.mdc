@@ -1,0 +1,24 @@
+---
+description: School-Cost domain model and business rules
+globs: **/*.{ts,tsx,sql}
+alwaysApply: false
+---
+
+# School-Cost Domain
+
+## School Types
+- kindergarten, primary, middle, high
+
+## Cost Fields (TL)
+- tuition_fee (required)
+- food_fee, book_fee, uniform_fee (optional)
+
+## Reference Code
+- Generate on insert: nanoid or crypto.randomUUID
+- Return to user for later updates
+
+## IQR Outlier Filter
+- Min 4 data points for filtering
+- Q1 = 25th percentile, Q3 = 75th percentile
+- IQR = Q3 - Q1
+- Lower = Q1 - 1.5*IQR, Upper = Q3 + 1.5*IQR

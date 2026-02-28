@@ -1,0 +1,38 @@
+# School-Cost (Okul Maliyet Endeksi) - Project Rules
+
+## Project Overview
+- **Purpose**: Anonymous data sharing platform for private school costs in Turkey
+- **Value Prop**: "Okulunuzun sadece etiket fiyatını değil, son faturada ödeyeceğiniz gerçek tutarı görün"
+- **Stack**: Next.js 15 (App Router), Supabase, Tailwind CSS, Shadcn UI, Zod, Zustand
+
+## Critical Technical Rules
+
+### Next.js 15
+- `cookies()` and `params` are async - ALWAYS use `await cookies()`, `await params`
+- Prefer React Server Components (RSC) - use `'use client'` only for forms, state, event handlers
+- Use `metadata` API for dynamic SEO per school page
+
+### Supabase
+- Use `@supabase/ssr` ONLY - NEVER use deprecated `@supabase/auth-helpers-nextjs`
+- RLS: Public read only for `is_verified = true` costs; INSERT for anonymous submissions
+
+### Database Schema
+- `schools`: id, name, city, district, type (kindergarten|primary|middle|high)
+- `costs`: school_id, academic_year, grade_level, tuition_fee, food_fee, book_fee, uniform_fee, is_verified, reference_code
+
+### Reference Code
+- Generate unique code on cost submission; allow user to update their data later via this code
+- Store as TEXT UNIQUE in costs table
+
+### Verification
+- `is_verified` defaults FALSE; manual verification for MVP (admin flow later)
+- Only verified costs visible in public search
+
+### IQR Statistics
+- Use Interquartile Range to filter outliers: Q1 - 1.5*IQR, Q3 + 1.5*IQR
+- Apply in SQL view or Server Action for cost aggregations
+
+## Naming
+- Components: PascalCase
+- Files: kebab-case (e.g., cost-entry-form.tsx)
+- Turkish UI labels; English code/comments

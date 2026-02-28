@@ -1,0 +1,14 @@
+---
+description: Use Context7 MCP for up-to-date docs when implementing Next.js or Supabase
+globs: **/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Context7 Usage
+
+When implementing Next.js 15 or Supabase features, use Context7 MCP for current docs:
+
+1. **resolve-library-id** with libraryName "Next.js" or "Supabase"
+2. **query-docs** with the returned library ID and specific query
+
+Library IDs: /vercel/next.js, /supabase/ssr, /supabase/supabase-js

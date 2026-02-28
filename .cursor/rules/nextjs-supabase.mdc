@@ -1,0 +1,25 @@
+---
+description: Next.js 15 and Supabase SSR integration patterns
+globs: **/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Next.js 15 + Supabase
+
+## Async APIs (Next.js 15)
+```typescript
+// ❌ BAD - cookies() is async in Next.js 15
+const cookieStore = cookies()
+
+// ✅ GOOD
+const cookieStore = await cookies()
+```
+
+## Supabase Client Creation
+- Server: Use `createServerClient` from `@supabase/ssr`
+- Client: Use `createBrowserClient` from `@supabase/ssr`
+- Never import `@supabase/auth-helpers-nextjs`
+
+## Server Components
+- Default to Server Components for data fetching
+- Use `'use client'` only for: forms, useState, useEffect, event handlers
