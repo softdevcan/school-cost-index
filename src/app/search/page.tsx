@@ -1,5 +1,5 @@
-import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { AppHeader } from '@/components/app-header'
 import { ROUTES } from '@/lib/constants/routes'
 import { SchoolSearch } from './school-search'
 
@@ -8,26 +8,32 @@ export const metadata = {
 	description: 'İl, ilçe ve okul adına göre özel okul maliyetlerini karşılaştırın.',
 }
 
-export default async function SearchPage() {
-	const supabase = await createClient()
+export const dynamic = 'force-dynamic'
 
-	const { data: cityRows } = await supabase
-		.from('schools')
-		.select('city')
-		.order('city')
-	const cities = [...new Set((cityRows ?? []).map((x) => x.city))]
+export default async function SearchPage() {
+	let cities: string[] = []
+	try {
+		const supabase = await createClient()
+		const { data: cityRows, error } = await supabase
+			.from('schools')
+			.select('city')
+			.order('city')
+
+		if (error) {
+			console.error('Supabase schools query error:', error)
+		} else {
+			cities = [...new Set((cityRows ?? []).map((x) => x.city))]
+		}
+	} catch (err) {
+		console.error('Search page data fetch error:', err)
+	}
 
 	return (
 		<main className="min-h-screen p-4 md:p-8">
-			<Link
-				href={ROUTES.HOME}
-				className="mb-6 inline-block text-sm text-blue-600 hover:underline"
-			>
-				← Ana sayfa
-			</Link>
+			<AppHeader showBack backHref={ROUTES.HOME} backLabel="Ana sayfa" />
 
-			<h1 className="mb-2 text-2xl font-bold">Okul Ara</h1>
-			<p className="mb-8 text-gray-600 dark:text-gray-400">
+			<h1 className="mb-2 text-2xl font-bold tracking-tight">Okul Ara</h1>
+			<p className="mb-8 text-muted-foreground">
 				İl, ilçe veya okul adına göre maliyet verilerini görüntüleyin.
 			</p>
 

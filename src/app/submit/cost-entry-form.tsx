@@ -4,6 +4,10 @@ import Link from 'next/link'
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
 import { submitCostEntryForm } from './actions'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent } from '@/components/ui/card'
 
 const MapPicker = dynamic(
 	() => import('@/components/map/map-picker').then((m) => ({ default: m.MapPicker })),
@@ -43,99 +47,75 @@ export function CostEntryForm() {
 
 	if (referenceCode) {
 		return (
-			<div className="mx-auto max-w-md rounded-lg border border-green-200 bg-green-50 p-6 dark:border-green-900 dark:bg-green-950">
-				<h2 className="text-lg font-semibold text-green-800 dark:text-green-200">
-					Veriniz kaydedildi
-				</h2>
-				<p className="mt-2 text-sm text-green-700 dark:text-green-300">
-					Referans kodunuzu saklayın. Verinizi güncellemek için{' '}
-					<Link href={`/update`} className="font-medium underline">
-						Veri Güncelle
-					</Link>{' '}
-					sayfasını kullanın.
-				</p>
-				<code className="mt-3 block rounded bg-green-100 px-3 py-2 font-mono text-sm dark:bg-green-900">
-					{referenceCode}
-				</code>
-			</div>
+			<Card className="mx-auto max-w-md border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950">
+				<CardContent className="pt-6">
+					<h2 className="text-lg font-semibold text-green-800 dark:text-green-200">
+						Veriniz kaydedildi
+					</h2>
+					<p className="mt-2 text-sm text-green-700 dark:text-green-300">
+						Referans kodunuzu saklayın. Verinizi güncellemek için{' '}
+						<Link href="/update" className="font-medium underline">
+							Veri Güncelle
+						</Link>{' '}
+						sayfasını kullanın.
+					</p>
+					<code className="mt-3 block rounded-md bg-green-100 px-3 py-2 font-mono text-sm dark:bg-green-900">
+						{referenceCode}
+					</code>
+				</CardContent>
+			</Card>
 		)
 	}
 
 	return (
 		<form action={handleSubmit} className="mx-auto max-w-md space-y-4">
-			<div>
-				<label htmlFor="school_name" className="block text-sm font-medium">
-					Okul Adı
-				</label>
-				<input
+			<div className="space-y-2">
+				<Label htmlFor="school_name">Okul Adı</Label>
+				<Input
 					id="school_name"
 					name="school_name"
 					type="text"
 					required
-					className="mt-1 w-full rounded border px-3 py-2"
 					placeholder="Örn: Özel İstanbul Koleji"
 				/>
 				{errors.school_name && (
-					<p className="mt-1 text-sm text-red-600">{errors.school_name[0]}</p>
+					<p className="text-sm text-destructive">{errors.school_name[0]}</p>
 				)}
 			</div>
 
 			<div className="grid grid-cols-2 gap-4">
-				<div>
-					<label htmlFor="city" className="block text-sm font-medium">
-						İl
-					</label>
-					<input
-						id="city"
-						name="city"
-						type="text"
-						required
-						className="mt-1 w-full rounded border px-3 py-2"
-						placeholder="İstanbul"
-					/>
+				<div className="space-y-2">
+					<Label htmlFor="city">İl</Label>
+					<Input id="city" name="city" type="text" required placeholder="İstanbul" />
 					{errors.city && (
-						<p className="mt-1 text-sm text-red-600">{errors.city[0]}</p>
+						<p className="text-sm text-destructive">{errors.city[0]}</p>
 					)}
 				</div>
-				<div>
-					<label htmlFor="district" className="block text-sm font-medium">
-						İlçe
-					</label>
-					<input
-						id="district"
-						name="district"
-						type="text"
-						required
-						className="mt-1 w-full rounded border px-3 py-2"
-						placeholder="Kadıköy"
-					/>
+				<div className="space-y-2">
+					<Label htmlFor="district">İlçe</Label>
+					<Input id="district" name="district" type="text" required placeholder="Kadıköy" />
 					{errors.district && (
-						<p className="mt-1 text-sm text-red-600">{errors.district[0]}</p>
+						<p className="text-sm text-destructive">{errors.district[0]}</p>
 					)}
 				</div>
 			</div>
 
-			<div>
-				<label htmlFor="address" className="block text-sm font-medium">
-					Adres / Konum (Opsiyonel)
-				</label>
-				<input
+			<div className="space-y-2">
+				<Label htmlFor="address">Adres / Konum (Opsiyonel)</Label>
+				<Input
 					id="address"
 					name="address"
 					type="text"
-					className="mt-1 w-full rounded border px-3 py-2"
 					placeholder="Mahalle, sokak, bina no"
 				/>
 				{errors.address && (
-					<p className="mt-1 text-sm text-red-600">{errors.address[0]}</p>
+					<p className="text-sm text-destructive">{errors.address[0]}</p>
 				)}
 			</div>
 
-			<div>
-				<label className="block text-sm font-medium mb-1">
-					Haritadan Konum Seç (Opsiyonel)
-				</label>
-				<p className="text-xs text-gray-500 mb-2">
+			<div className="space-y-2">
+				<Label>Haritadan Konum Seç (Opsiyonel)</Label>
+				<p className="text-xs text-muted-foreground">
 					Haritada okulun konumuna tıklayın
 				</p>
 				<MapPicker
@@ -151,16 +131,15 @@ export function CostEntryForm() {
 				<input type="hidden" name="longitude" value={longitude ?? ''} />
 			</div>
 
-			<div>
-				<label htmlFor="school_type" className="block text-sm font-medium">
-					Okul Türü
-				</label>
+			<div className="space-y-2">
+				<Label htmlFor="school_type">Okul Türü</Label>
 				<select
 					id="school_type"
 					name="school_type"
 					required
-					className="mt-1 w-full rounded border px-3 py-2"
+					className="border-input bg-background h-9 w-full rounded-md border px-3 py-1 text-sm shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-ring"
 				>
+					<option value="">Seçin</option>
 					{SCHOOL_TYPES.map((t) => (
 						<option key={t.value} value={t.value}>
 							{t.label}
@@ -170,118 +149,96 @@ export function CostEntryForm() {
 			</div>
 
 			<div className="grid grid-cols-2 gap-4">
-				<div>
-					<label htmlFor="academic_year" className="block text-sm font-medium">
-						Eğitim Yılı
-					</label>
-					<input
+				<div className="space-y-2">
+					<Label htmlFor="academic_year">Eğitim Yılı</Label>
+					<Input
 						id="academic_year"
 						name="academic_year"
 						type="text"
 						required
 						defaultValue={ACADEMIC_YEAR}
-						className="mt-1 w-full rounded border px-3 py-2"
 						placeholder="2026-2027"
 					/>
 					{errors.academic_year && (
-						<p className="mt-1 text-sm text-red-600">
+						<p className="text-sm text-destructive">
 							{errors.academic_year[0]}
 						</p>
 					)}
 				</div>
-				<div>
-					<label htmlFor="grade_level" className="block text-sm font-medium">
-						Sınıf
-					</label>
-					<input
+				<div className="space-y-2">
+					<Label htmlFor="grade_level">Sınıf</Label>
+					<Input
 						id="grade_level"
 						name="grade_level"
 						type="number"
 						min={0}
 						max={12}
 						required
-						className="mt-1 w-full rounded border px-3 py-2"
 						placeholder="1"
 					/>
 					{errors.grade_level && (
-						<p className="mt-1 text-sm text-red-600">
+						<p className="text-sm text-destructive">
 							{errors.grade_level[0]}
 						</p>
 					)}
 				</div>
 			</div>
 
-			<div>
-				<label htmlFor="tuition_fee" className="block text-sm font-medium">
-					Eğitim Ücreti (TL)
-				</label>
-				<input
+			<div className="space-y-2">
+				<Label htmlFor="tuition_fee">Eğitim Ücreti (TL)</Label>
+				<Input
 					id="tuition_fee"
 					name="tuition_fee"
 					type="number"
 					min={0}
 					step={1000}
 					required
-					className="mt-1 w-full rounded border px-3 py-2"
 					placeholder="250000"
 				/>
 				{errors.tuition_fee && (
-					<p className="mt-1 text-sm text-red-600">{errors.tuition_fee[0]}</p>
+					<p className="text-sm text-destructive">{errors.tuition_fee[0]}</p>
 				)}
 			</div>
 
-			<div>
-				<label htmlFor="food_fee" className="block text-sm font-medium">
-					Yemek Ücreti (TL) - Opsiyonel
-				</label>
-				<input
+			<div className="space-y-2">
+				<Label htmlFor="food_fee">Yemek Ücreti (TL) - Opsiyonel</Label>
+				<Input
 					id="food_fee"
 					name="food_fee"
 					type="number"
 					min={0}
 					step={1000}
-					className="mt-1 w-full rounded border px-3 py-2"
 					placeholder="60000"
 				/>
 			</div>
 
-			<div>
-				<label htmlFor="book_fee" className="block text-sm font-medium">
-					Kitap/Kırtasiye (TL) - Opsiyonel
-				</label>
-				<input
+			<div className="space-y-2">
+				<Label htmlFor="book_fee">Kitap/Kırtasiye (TL) - Opsiyonel</Label>
+				<Input
 					id="book_fee"
 					name="book_fee"
 					type="number"
 					min={0}
 					step={1000}
-					className="mt-1 w-full rounded border px-3 py-2"
 					placeholder="40000"
 				/>
 			</div>
 
-			<div>
-				<label htmlFor="uniform_fee" className="block text-sm font-medium">
-					Kıyafet Ücreti (TL) - Opsiyonel
-				</label>
-				<input
+			<div className="space-y-2">
+				<Label htmlFor="uniform_fee">Kıyafet Ücreti (TL) - Opsiyonel</Label>
+				<Input
 					id="uniform_fee"
 					name="uniform_fee"
 					type="number"
 					min={0}
 					step={1000}
-					className="mt-1 w-full rounded border px-3 py-2"
 					placeholder="15000"
 				/>
 			</div>
 
-			<button
-				type="submit"
-				disabled={isSubmitting}
-				className="w-full rounded-lg bg-blue-600 py-3 font-medium text-white transition hover:bg-blue-700 disabled:opacity-50"
-			>
+			<Button type="submit" disabled={isSubmitting} className="w-full" size="lg">
 				{isSubmitting ? 'Gönderiliyor...' : 'Anonim Olarak Paylaş'}
-			</button>
+			</Button>
 		</form>
 	)
 }

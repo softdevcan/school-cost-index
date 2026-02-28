@@ -3,6 +3,10 @@
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
 import { fetchCostByReference, updateCostByReference } from './actions'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent } from '@/components/ui/card'
 
 const MapPicker = dynamic(
 	() => import('@/components/map/map-picker').then((m) => ({ default: m.MapPicker })),
@@ -73,44 +77,40 @@ export function UpdateCostForm() {
 	if (step === 'code') {
 		return (
 			<form onSubmit={handleFetchCode} className="mx-auto max-w-md space-y-4">
-				<div>
-					<label htmlFor="reference_code" className="block text-sm font-medium">
-						Referans Kodu
-					</label>
-					<input
+				<div className="space-y-2">
+					<Label htmlFor="reference_code">Referans Kodu</Label>
+					<Input
 						id="reference_code"
 						type="text"
 						value={referenceCode}
 						onChange={(e) => setReferenceCode(e.target.value)}
 						placeholder="Veri paylaşımı sonrası aldığınız kod"
 						required
-						className="mt-1 w-full rounded border px-3 py-2 font-mono"
+						className="font-mono"
 					/>
 					{errors._form && (
-						<p className="mt-1 text-sm text-red-600">{errors._form[0]}</p>
+						<p className="text-sm text-destructive">{errors._form[0]}</p>
 					)}
 				</div>
-				<button
-					type="submit"
-					disabled={isLoading}
-					className="w-full rounded-lg bg-blue-600 py-3 font-medium text-white transition hover:bg-blue-700 disabled:opacity-50"
-				>
+				<Button type="submit" disabled={isLoading} className="w-full" size="lg">
 					{isLoading ? 'Kontrol ediliyor...' : 'Devam Et'}
-				</button>
+				</Button>
 			</form>
 		)
 	}
 
 	if (step === 'success') {
 		return (
-			<div className="mx-auto max-w-md rounded-lg border border-green-200 bg-green-50 p-6 dark:border-green-900 dark:bg-green-950">
-				<h2 className="text-lg font-semibold text-green-800 dark:text-green-200">
-					Veriniz güncellendi
-				</h2>
-				<p className="mt-2 text-sm text-green-700 dark:text-green-300">
-					Değişiklikler kaydedildi.
-				</p>
-			</div>
+			<Card className="mx-auto max-w-md border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950">
+				<CardContent className="pt-6">
+					<h2 className="text-lg font-semibold text-green-800 dark:text-green-200">
+						Veriniz güncellendi
+					</h2>
+					<p className="mt-2 text-sm text-green-700 dark:text-green-300">
+						Değişiklikler kaydedildi.
+					</p>
+				</CardContent>
+			</Card>
 		)
 	}
 
@@ -118,18 +118,18 @@ export function UpdateCostForm() {
 		const d = costData.data
 		return (
 			<form onSubmit={handleUpdate} className="mx-auto max-w-md space-y-4">
-				<div className="rounded bg-gray-100 p-3 text-sm dark:bg-gray-800">
-					<p className="font-medium">{d.school_name}</p>
-					<p className="text-gray-500">
-						{d.district}, {d.city} · {d.academic_year} (Sınıf {d.grade_level})
-					</p>
-				</div>
+				<Card>
+					<CardContent className="pt-6">
+						<p className="font-medium">{d.school_name}</p>
+						<p className="text-sm text-muted-foreground">
+							{d.district}, {d.city} · {d.academic_year} (Sınıf {d.grade_level})
+						</p>
+					</CardContent>
+				</Card>
 
-				<div>
-					<label htmlFor="tuition_fee" className="block text-sm font-medium">
-						Eğitim Ücreti (TL)
-					</label>
-					<input
+				<div className="space-y-2">
+					<Label htmlFor="tuition_fee">Eğitim Ücreti (TL)</Label>
+					<Input
 						id="tuition_fee"
 						name="tuition_fee"
 						type="number"
@@ -137,73 +137,58 @@ export function UpdateCostForm() {
 						step={1000}
 						required
 						defaultValue={d.tuition_fee}
-						className="mt-1 w-full rounded border px-3 py-2"
 					/>
 				</div>
 
-				<div>
-					<label htmlFor="food_fee" className="block text-sm font-medium">
-						Yemek Ücreti (TL)
-					</label>
-					<input
+				<div className="space-y-2">
+					<Label htmlFor="food_fee">Yemek Ücreti (TL)</Label>
+					<Input
 						id="food_fee"
 						name="food_fee"
 						type="number"
 						min={0}
 						step={1000}
 						defaultValue={d.food_fee ?? ''}
-						className="mt-1 w-full rounded border px-3 py-2"
 					/>
 				</div>
 
-				<div>
-					<label htmlFor="book_fee" className="block text-sm font-medium">
-						Kitap/Kırtasiye (TL)
-					</label>
-					<input
+				<div className="space-y-2">
+					<Label htmlFor="book_fee">Kitap/Kırtasiye (TL)</Label>
+					<Input
 						id="book_fee"
 						name="book_fee"
 						type="number"
 						min={0}
 						step={1000}
 						defaultValue={d.book_fee ?? ''}
-						className="mt-1 w-full rounded border px-3 py-2"
 					/>
 				</div>
 
-				<div>
-					<label htmlFor="uniform_fee" className="block text-sm font-medium">
-						Kıyafet Ücreti (TL)
-					</label>
-					<input
+				<div className="space-y-2">
+					<Label htmlFor="uniform_fee">Kıyafet Ücreti (TL)</Label>
+					<Input
 						id="uniform_fee"
 						name="uniform_fee"
 						type="number"
 						min={0}
 						step={1000}
 						defaultValue={d.uniform_fee ?? ''}
-						className="mt-1 w-full rounded border px-3 py-2"
 					/>
 				</div>
 
-				<div>
-					<label htmlFor="address" className="block text-sm font-medium">
-						Adres / Konum
-					</label>
-					<input
+				<div className="space-y-2">
+					<Label htmlFor="address">Adres / Konum</Label>
+					<Input
 						id="address"
 						name="address"
 						type="text"
 						defaultValue={d.address ?? ''}
-						className="mt-1 w-full rounded border px-3 py-2"
 						placeholder="Mahalle, sokak, bina no"
 					/>
 				</div>
 
-				<div>
-					<label className="block text-sm font-medium mb-1">
-						Haritadan Konum Güncelle
-					</label>
+				<div className="space-y-2">
+					<Label>Haritadan Konum Güncelle</Label>
 					<MapPicker
 						latitude={latitude}
 						longitude={longitude}
@@ -216,24 +201,25 @@ export function UpdateCostForm() {
 				</div>
 
 				{errors._form && (
-					<p className="text-sm text-red-600">{errors._form[0]}</p>
+					<p className="text-sm text-destructive">{errors._form[0]}</p>
 				)}
 
 				<div className="flex gap-2">
-					<button
+					<Button
 						type="button"
+						variant="outline"
 						onClick={() => setStep('code')}
-						className="rounded-lg border px-4 py-2 font-medium"
 					>
 						Geri
-					</button>
-					<button
+					</Button>
+					<Button
 						type="submit"
 						disabled={isLoading}
-						className="flex-1 rounded-lg bg-blue-600 py-3 font-medium text-white transition hover:bg-blue-700 disabled:opacity-50"
+						className="flex-1"
+						size="lg"
 					>
 						{isLoading ? 'Güncelleniyor...' : 'Güncelle'}
-					</button>
+					</Button>
 				</div>
 			</form>
 		)

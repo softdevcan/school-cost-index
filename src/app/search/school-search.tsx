@@ -4,6 +4,18 @@ import { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/client'
 import { filterOutliers } from '@/lib/utils/statistics'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select'
+import { Card, CardContent } from '@/components/ui/card'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 
 const SchoolMap = dynamic(
 	() => import('@/components/map/school-map').then((m) => ({ default: m.SchoolMap })),
@@ -196,131 +208,101 @@ export function SchoolSearch({ cities }: { cities: string[] }) {
 	return (
 		<form onSubmit={handleSearch} className="space-y-6">
 			<div className="grid gap-4 sm:grid-cols-3">
-				<div>
-					<label htmlFor="city" className="block text-sm font-medium">
-						İl
-					</label>
-					<select
-						id="city"
-						value={city}
-						onChange={(e) => setCity(e.target.value)}
-						className="mt-1 w-full rounded border px-3 py-2"
-					>
-						<option value="">Tümü</option>
-						{cities.map((c) => (
-							<option key={c} value={c}>
-								{c}
-							</option>
-						))}
-					</select>
+				<div className="space-y-2">
+					<Label htmlFor="city">İl</Label>
+					<Select value={city || '_all'} onValueChange={(v) => setCity(v === '_all' ? '' : v)}>
+						<SelectTrigger id="city" className="w-full">
+							<SelectValue placeholder="Tümü" />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectItem value="_all">Tümü</SelectItem>
+							{cities.map((c) => (
+								<SelectItem key={c} value={c}>
+									{c}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
 				</div>
-				<div>
-					<label htmlFor="district" className="block text-sm font-medium">
-						İlçe
-					</label>
-					<select
-						id="district"
-						value={district}
-						onChange={(e) => setDistrict(e.target.value)}
-						className="mt-1 w-full rounded border px-3 py-2"
+				<div className="space-y-2">
+					<Label htmlFor="district">İlçe</Label>
+					<Select
+						value={district || '_all'}
+						onValueChange={(v) => setDistrict(v === '_all' ? '' : v)}
 					>
-						<option value="">Tümü</option>
-						{districtOptions.map((d) => (
-							<option key={d} value={d}>
-								{d}
-							</option>
-						))}
-					</select>
+						<SelectTrigger id="district" className="w-full">
+							<SelectValue placeholder="Tümü" />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectItem value="_all">Tümü</SelectItem>
+							{districtOptions.map((d) => (
+								<SelectItem key={d} value={d}>
+									{d}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
 				</div>
-				<div>
-					<label htmlFor="school_name" className="block text-sm font-medium">
-						Okul Adı
-					</label>
-					<input
+				<div className="space-y-2">
+					<Label htmlFor="school_name">Okul Adı</Label>
+					<Input
 						id="school_name"
 						type="text"
 						value={schoolName}
 						onChange={(e) => setSchoolName(e.target.value)}
 						placeholder="Ara..."
-						className="mt-1 w-full rounded border px-3 py-2"
 					/>
 				</div>
 			</div>
 
-			<button
-				type="submit"
-				disabled={isLoading}
-				className="rounded-lg bg-blue-600 px-6 py-2 font-medium text-white transition hover:bg-blue-700 disabled:opacity-50"
-			>
+			<Button type="submit" disabled={isLoading}>
 				{isLoading ? 'Aranıyor...' : 'Ara'}
-			</button>
+			</Button>
 
 			{results.length > 0 && (
-				<div className="space-y-4">
+				<Tabs
+					value={viewMode}
+					onValueChange={(v) => setViewMode(v as ViewMode)}
+					className="space-y-4"
+				>
 					<div className="flex flex-wrap items-center justify-between gap-2">
 						<h2 className="text-lg font-semibold">Sonuçlar ({results.length})</h2>
-						<div className="flex gap-2">
-							<button
-								type="button"
-								onClick={() => setViewMode('list')}
-								className={`rounded px-3 py-1 text-sm font-medium ${
-									viewMode === 'list'
-										? 'bg-blue-600 text-white'
-										: 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300'
-								}`}
-							>
-								Liste
-							</button>
-							<button
-								type="button"
-								onClick={() => setViewMode('map')}
-								className={`rounded px-3 py-1 text-sm font-medium ${
-									viewMode === 'map'
-										? 'bg-blue-600 text-white'
-										: 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300'
-								}`}
-							>
-								Harita
-							</button>
-						</div>
+						<TabsList>
+							<TabsTrigger value="list">Liste</TabsTrigger>
+							<TabsTrigger value="map">Harita</TabsTrigger>
+						</TabsList>
 					</div>
-					{viewMode === 'map' && (
-						<SchoolMap
-							schools={results}
-							className="mt-2"
-						/>
-					)}
-					{viewMode === 'list' && (
-					<div className="space-y-3">
+					<TabsContent value="map" className="mt-2">
+						<SchoolMap schools={results} className="mt-2" />
+					</TabsContent>
+					<TabsContent value="list" className="mt-2 space-y-3">
 						{results.map((s) => (
-							<div
-								key={s.id}
-								className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900"
-							>
-								<div className="flex flex-wrap items-center justify-between gap-2">
+							<Card key={s.id}>
+								<CardContent className="flex flex-wrap items-center justify-between gap-2 pt-6">
 									<div>
 										<h3 className="font-medium">{s.name}</h3>
-										<p className="text-sm text-gray-500">
+										<p className="text-sm text-muted-foreground">
 											{s.district}, {s.city} · {TYPE_LABELS[s.type] ?? s.type}
 										</p>
 										{s.address && (
-											<p className="mt-1 text-xs text-gray-400">{s.address}</p>
+											<p className="mt-1 text-xs text-muted-foreground">
+												{s.address}
+											</p>
 										)}
 									</div>
 									<div className="text-right">
 										<p className="text-lg font-semibold">
 											{s.avg_total.toLocaleString('tr-TR')} TL
 										</p>
-										<p className="text-xs text-gray-500">
+										<p className="text-xs text-muted-foreground">
 											Ort. toplam ({s.cost_count} veri)
 										</p>
 									</div>
-								</div>
-							</div>
+								</CardContent>
+							</Card>
 						))}
-					</div>
-					)}
-				</div>
+					</TabsContent>
+				</Tabs>
 			)}
 		</form>
 	)

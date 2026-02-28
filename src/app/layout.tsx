@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
+import { ThemeProvider } from '@/components/theme-provider'
 
 export const metadata: Metadata = {
 	title: 'Okul Maliyet Endeksi | Özel Okul Fiyatları',
@@ -18,8 +19,17 @@ export default function RootLayout({
 	children: React.ReactNode
 }>) {
 	return (
-		<html lang="tr">
-			<body className="min-h-screen antialiased">{children}</body>
+		<html lang="tr" suppressHydrationWarning>
+			<body className="min-h-screen antialiased">
+				<ThemeProvider
+					attribute="class"
+					defaultTheme="system"
+					enableSystem
+					disableTransitionOnChange
+				>
+					{children}
+				</ThemeProvider>
+			</body>
 		</html>
 	)
 }
