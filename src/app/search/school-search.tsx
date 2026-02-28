@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/client'
 import { filterOutliers } from '@/lib/utils/statistics'
+import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -284,7 +285,14 @@ export function SchoolSearch({ cities }: { cities: string[] }) {
 			</div>
 
 			<Button type="submit" disabled={isLoading}>
-				{isLoading ? 'Aranıyor...' : 'Ara'}
+				{isLoading ? (
+					<>
+						<Loader2 className="size-4 animate-spin" />
+						Aranıyor...
+					</>
+				) : (
+					'Ara'
+				)}
 			</Button>
 
 			{error && (
@@ -293,7 +301,7 @@ export function SchoolSearch({ cities }: { cities: string[] }) {
 				</div>
 			)}
 
-			{searchAttempted && results.length === 0 && !error && (
+			{searchAttempted && results.length === 0 && !error && !isLoading && (
 				<p className="text-muted-foreground">
 					Seçtiğiniz kriterlere uygun sonuç bulunamadı. Filtreleri değiştirerek tekrar
 					deneyin.
