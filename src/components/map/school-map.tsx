@@ -77,12 +77,14 @@ export function SchoolMap({ schools, className = '' }: SchoolMapProps) {
 				s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 
 			withCoords.forEach((school) => {
+				const detailUrl = `/school/${school.id}`
 				const popup = L.popup().setContent(
 					`<div class="p-2 min-w-[180px]">
 						<strong class="block text-sm">${escapeHtml(school.name)}</strong>
 						<p class="text-xs text-gray-500 mt-1">${escapeHtml(school.district)}, ${escapeHtml(school.city)}</p>
 						<p class="text-sm font-semibold mt-2">${school.avg_total.toLocaleString('tr-TR')} TL</p>
 						<p class="text-xs text-gray-400">${school.cost_count} veri</p>
+						<a href="${detailUrl}" class="mt-2 block text-xs text-blue-600 hover:underline">Detay →</a>
 					</div>`
 				)
 				const marker = L.marker([school.latitude, school.longitude])

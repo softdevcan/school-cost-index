@@ -18,8 +18,8 @@ export function Footer() {
 					<div className="space-y-2">
 						<p className="font-semibold">Okul Maliyet Endeksi</p>
 						<p className="max-w-md text-sm text-muted-foreground">
-							Özel okul fiyatlarını karşılaştırın. Anonim veri paylaşımı ile gerçek
-							maliyetleri görün.
+							Özel okul fiyatlarını karşılaştırın. Kullanıcı paylaşımları ile gerçek
+							maliyetleri görün. Kimlik bilgisi toplanmaz.
 						</p>
 					</div>
 
@@ -38,7 +38,7 @@ export function Footer() {
 
 				<div className="mt-8 border-t pt-6">
 					<p className="text-center text-xs text-muted-foreground">
-						© {currentYear} Okul Maliyet Endeksi. Tüm veriler anonimdir.
+						© {currentYear} Okul Maliyet Endeksi. Kimlik bilgisi toplanmaz.
 					</p>
 				</div>
 			</div>

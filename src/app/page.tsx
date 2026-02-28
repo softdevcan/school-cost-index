@@ -33,14 +33,14 @@ export default function HomePage() {
 					<CardHeader>
 						<CardTitle>Nasıl çalışır?</CardTitle>
 						<CardDescription>
-							Anonim olarak paylaşılan maliyet verileri ile özel okulların gerçek
-							yıllık maliyetlerini karşılaştırın.
+							Kullanıcıların paylaştığı maliyet verileri ile özel okulların gerçek
+							yıllık maliyetlerini karşılaştırın. Kimlik bilgisi toplanmaz.
 						</CardDescription>
 					</CardHeader>
 					<CardContent className="text-sm text-muted-foreground">
 						<ul className="list-inside list-disc space-y-1">
 							<li>İl, ilçe veya okul adına göre arama yapın</li>
-							<li>Kendi maliyet verinizi anonim olarak paylaşın</li>
+							<li>Kendi maliyet verinizi paylaşın (kimlik bilgisi istenmez)</li>
 							<li>Referans kodunuz ile verinizi güncelleyebilirsiniz</li>
 						</ul>
 					</CardContent>

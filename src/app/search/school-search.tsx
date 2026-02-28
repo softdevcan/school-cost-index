@@ -14,7 +14,9 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
+import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
+import { ROUTES } from '@/lib/constants/routes'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 
 const SchoolMap = dynamic(
@@ -316,29 +318,31 @@ export function SchoolSearch({ cities }: { cities: string[] }) {
 					</TabsContent>
 					<TabsContent value="list" className="mt-2 space-y-3">
 						{results.map((s) => (
-							<Card key={s.id}>
-								<CardContent className="flex flex-wrap items-center justify-between gap-2 pt-6">
-									<div>
-										<h3 className="font-medium">{s.name}</h3>
-										<p className="text-sm text-muted-foreground">
-											{s.district}, {s.city} · {TYPE_LABELS[s.type] ?? s.type}
-										</p>
-										{s.address && (
-											<p className="mt-1 text-xs text-muted-foreground">
-												{s.address}
+							<Link key={s.id} href={ROUTES.SCHOOL(s.id)}>
+								<Card className="transition-colors hover:bg-accent/50">
+									<CardContent className="flex flex-wrap items-center justify-between gap-2 pt-6">
+										<div>
+											<h3 className="font-medium">{s.name}</h3>
+											<p className="text-sm text-muted-foreground">
+												{s.district}, {s.city} · {TYPE_LABELS[s.type] ?? s.type}
 											</p>
-										)}
-									</div>
-									<div className="text-right">
-										<p className="text-lg font-semibold">
-											{s.avg_total.toLocaleString('tr-TR')} TL
-										</p>
-										<p className="text-xs text-muted-foreground">
-											Ort. toplam ({s.cost_count} veri)
-										</p>
-									</div>
-								</CardContent>
-							</Card>
+											{s.address && (
+												<p className="mt-1 text-xs text-muted-foreground">
+													{s.address}
+												</p>
+											)}
+										</div>
+										<div className="text-right">
+											<p className="text-lg font-semibold">
+												{s.avg_total.toLocaleString('tr-TR')} TL
+											</p>
+											<p className="text-xs text-muted-foreground">
+												Ort. toplam ({s.cost_count} veri)
+											</p>
+										</div>
+									</CardContent>
+								</Card>
+							</Link>
 						))}
 					</TabsContent>
 				</Tabs>

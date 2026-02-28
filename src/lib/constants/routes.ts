@@ -6,4 +6,5 @@ export const ROUTES = {
 	SEARCH: '/search',
 	SUBMIT: '/submit',
 	UPDATE: '/update',
+	SCHOOL: (id: string) => `/school/${id}`,
 } as const

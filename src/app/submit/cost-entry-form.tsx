@@ -237,7 +237,7 @@ export function CostEntryForm() {
 			</div>
 
 			<Button type="submit" disabled={isSubmitting} className="w-full" size="lg">
-				{isSubmitting ? 'Gönderiliyor...' : 'Anonim Olarak Paylaş'}
+				{isSubmitting ? 'Gönderiliyor...' : 'Paylaş'}
 			</Button>
 		</form>
 	)
