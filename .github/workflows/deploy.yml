@@ -35,7 +35,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd ${{ secrets.DEPLOY_PATH || '~/school-cost-index' }}
+            cd ${{ secrets.DEPLOY_PATH || '/srv/school-cost-index' }}
             git pull origin main
             if [ -f docker-compose.yml ] && [ "${{ secrets.DEPLOY_USE_DOCKER }}" = "true" ]; then
               docker compose build --no-cache
