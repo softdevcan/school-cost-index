@@ -1,14 +1,12 @@
 import Link from 'next/link'
 import { ROUTES } from '@/lib/constants/routes'
-import { AppHeader } from '@/components/app-header'
+import { PageContainer } from '@/components/page-container'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function HomePage() {
 	return (
-		<main className="min-h-screen p-4 md:p-8">
-			<AppHeader />
-
+		<PageContainer>
 			<header className="mb-10 text-center">
 				<h1 className="text-3xl font-bold tracking-tight md:text-4xl">
 					Okul Maliyet Endeksi
@@ -48,6 +46,6 @@ export default function HomePage() {
 					</CardContent>
 				</Card>
 			</div>
-		</main>
+		</PageContainer>
 	)
 }

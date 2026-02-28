@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
+import { Navbar } from '@/components/navbar'
+import { Footer } from '@/components/footer'
 
 export const metadata: Metadata = {
 	title: 'Okul Maliyet Endeksi | Özel Okul Fiyatları',
@@ -20,14 +22,16 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="tr" suppressHydrationWarning>
-			<body className="min-h-screen antialiased">
+			<body className="min-h-screen antialiased flex flex-col">
 				<ThemeProvider
 					attribute="class"
 					defaultTheme="system"
 					enableSystem
 					disableTransitionOnChange
 				>
-					{children}
+					<Navbar />
+					<main className="flex-1">{children}</main>
+					<Footer />
 				</ThemeProvider>
 			</body>
 		</html>

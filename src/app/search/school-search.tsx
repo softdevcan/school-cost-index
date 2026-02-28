@@ -53,6 +53,8 @@ export function SchoolSearch({ cities }: { cities: string[] }) {
 	const [results, setResults] = useState<SchoolWithCosts[]>([])
 	const [isLoading, setIsLoading] = useState(false)
 	const [viewMode, setViewMode] = useState<ViewMode>('list')
+	const [searchAttempted, setSearchAttempted] = useState(false)
+	const [error, setError] = useState<string | null>(null)
 
 	const supabase = createClient()
 
@@ -78,59 +80,77 @@ export function SchoolSearch({ cities }: { cities: string[] }) {
 	async function handleSearch(e: React.FormEvent) {
 		e.preventDefault()
 		setIsLoading(true)
+		setError(null)
+		setSearchAttempted(true)
 
-		const costQuery = supabase
-			.from('costs')
-			.select(
+		try {
+			const costQuery = supabase
+				.from('costs')
+				.select(
+					`
+					tuition_fee,
+					food_fee,
+					book_fee,
+					uniform_fee,
+					schools!inner(id, name, city, district, address, latitude, longitude, type)
 				`
-				tuition_fee,
-				food_fee,
-				book_fee,
-				uniform_fee,
-				schools!inner(id, name, city, district, address, latitude, longitude, type)
-			`
-			)
-			.eq('is_verified', true)
+				)
+				.eq('is_verified', true)
 
-		const { data: costData } = await costQuery
+			const { data: costData, error: queryError } = await costQuery
 
-		type SchoolInfo = {
-			id: string
-			name: string
-			city: string
-			district: string
-			address: string | null
-			latitude: number | null
-			longitude: number | null
-			type: string
-		}
-		type CostRow = {
-			tuition_fee: number
-			food_fee: number | null
-			book_fee: number | null
-			uniform_fee: number | null
-			schools: SchoolInfo | SchoolInfo[] | null
-		}
+			if (queryError) {
+				console.error('Supabase costs query error:', queryError)
+				setError(`Veri alınamadı: ${queryError.message}`)
+				setResults([])
+				return
+			}
 
-		const getSchool = (c: CostRow): SchoolInfo | null => {
-			const s = c.schools
-			if (!s) return null
-			return Array.isArray(s) ? s[0] ?? null : s
-		}
+			type SchoolInfo = {
+				id: string
+				name: string
+				city: string
+				district: string
+				address: string | null
+				latitude: number | null
+				longitude: number | null
+				type: string
+			}
+			type CostRow = {
+				tuition_fee: number
+				food_fee: number | null
+				book_fee: number | null
+				uniform_fee: number | null
+				schools: SchoolInfo | SchoolInfo[] | null
+			}
 
-		let filtered: CostRow[] = (costData ?? []) as unknown as CostRow[]
-		if (city) {
-			filtered = filtered.filter((c) => getSchool(c)?.city === city)
-		}
-		if (district) {
-			filtered = filtered.filter((c) => getSchool(c)?.district === district)
-		}
-		if (schoolName) {
-			const lower = schoolName.toLowerCase()
-			filtered = filtered.filter((c) =>
-				getSchool(c)?.name.toLowerCase().includes(lower)
-			)
-		}
+			const getSchool = (c: CostRow): SchoolInfo | null => {
+				const s = c.schools
+				if (!s) return null
+				return Array.isArray(s) ? s[0] ?? null : s
+			}
+
+			const normalizeStr = (s: string) => s.trim().toLocaleLowerCase('tr-TR')
+
+			let filtered: CostRow[] = (costData ?? []) as unknown as CostRow[]
+			if (city) {
+				const cityNorm = normalizeStr(city)
+				filtered = filtered.filter(
+					(c) => normalizeStr(getSchool(c)?.city ?? '') === cityNorm
+				)
+			}
+			if (district) {
+				const districtNorm = normalizeStr(district)
+				filtered = filtered.filter(
+					(c) => normalizeStr(getSchool(c)?.district ?? '') === districtNorm
+				)
+			}
+			if (schoolName.trim()) {
+				const nameLower = normalizeStr(schoolName)
+				filtered = filtered.filter((c) =>
+					normalizeStr(getSchool(c)?.name ?? '').includes(nameLower)
+				)
+			}
 
 		// Aggregate by school
 		const schoolsMap = new Map<
@@ -200,9 +220,15 @@ export function SchoolSearch({ cities }: { cities: string[] }) {
 			})
 		}
 
-		aggregated.sort((a, b) => b.avg_total - a.avg_total)
-		setResults(aggregated)
-		setIsLoading(false)
+			aggregated.sort((a, b) => b.avg_total - a.avg_total)
+			setResults(aggregated)
+		} catch (err) {
+			console.error('Search error:', err)
+			setError(err instanceof Error ? err.message : 'Beklenmeyen bir hata oluştu.')
+			setResults([])
+		} finally {
+			setIsLoading(false)
+		}
 	}
 
 	return (
@@ -258,6 +284,19 @@ export function SchoolSearch({ cities }: { cities: string[] }) {
 			<Button type="submit" disabled={isLoading}>
 				{isLoading ? 'Aranıyor...' : 'Ara'}
 			</Button>
+
+			{error && (
+				<div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">
+					{error}
+				</div>
+			)}
+
+			{searchAttempted && results.length === 0 && !error && (
+				<p className="text-muted-foreground">
+					Seçtiğiniz kriterlere uygun sonuç bulunamadı. Filtreleri değiştirerek tekrar
+					deneyin.
+				</p>
+			)}
 
 			{results.length > 0 && (
 				<Tabs

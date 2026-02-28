@@ -1,5 +1,6 @@
 import { ROUTES } from '@/lib/constants/routes'
-import { AppHeader } from '@/components/app-header'
+import { PageContainer } from '@/components/page-container'
+import { BackLink } from '@/components/back-link'
 import { CostEntryForm } from './cost-entry-form'
 
 export const metadata = {
@@ -9,8 +10,8 @@ export const metadata = {
 
 export default function SubmitCostPage() {
 	return (
-		<main className="min-h-screen p-4 md:p-8">
-			<AppHeader showBack backHref={ROUTES.HOME} backLabel="Ana sayfa" />
+		<PageContainer>
+			<BackLink href={ROUTES.HOME} label="Ana sayfa" className="mb-6 block" />
 
 			<h1 className="mb-2 text-2xl font-bold tracking-tight">Veri Paylaş</h1>
 			<p className="mb-8 text-muted-foreground">
@@ -18,6 +19,6 @@ export default function SubmitCostPage() {
 			</p>
 
 			<CostEntryForm />
-		</main>
+		</PageContainer>
 	)
 }

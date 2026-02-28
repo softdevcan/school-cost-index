@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import Link from 'next/link'
+import { PageContainer } from '@/components/page-container'
 import { ROUTES } from '@/lib/constants/routes'
 
 export default function SearchError({
@@ -16,7 +17,7 @@ export default function SearchError({
 	}, [error])
 
 	return (
-		<main className="min-h-screen p-4 md:p-8">
+		<PageContainer>
 			<Link
 				href={ROUTES.HOME}
 				className="mb-6 inline-block text-sm text-blue-600 hover:underline dark:text-blue-400"
@@ -39,6 +40,6 @@ export default function SearchError({
 					Tekrar Dene
 				</button>
 			</div>
-		</main>
+		</PageContainer>
 	)
 }
