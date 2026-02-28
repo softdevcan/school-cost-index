@@ -17,7 +17,8 @@ src/
 │   ├── search/             # /search - school cost search
 │   │   ├── page.tsx
 │   │   └── school-search.tsx
-│   └── submit/             # /submit - anonymous cost entry
+│   ├── submit/             # /submit - anonymous cost entry
+│   └── update/             # /update - update cost by reference code
 │       ├── page.tsx
 │       ├── cost-entry-form.tsx
 │       └── actions.ts

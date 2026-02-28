@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
 import { submitCostEntryForm } from './actions'
@@ -47,7 +48,11 @@ export function CostEntryForm() {
 					Veriniz kaydedildi
 				</h2>
 				<p className="mt-2 text-sm text-green-700 dark:text-green-300">
-					Referans kodunuzu saklayın. Verinizi güncellemek için bu kodu kullanacaksınız.
+					Referans kodunuzu saklayın. Verinizi güncellemek için{' '}
+					<Link href={`/update`} className="font-medium underline">
+						Veri Güncelle
+					</Link>{' '}
+					sayfasını kullanın.
 				</p>
 				<code className="mt-3 block rounded bg-green-100 px-3 py-2 font-mono text-sm dark:bg-green-900">
 					{referenceCode}

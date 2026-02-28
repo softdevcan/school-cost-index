@@ -13,7 +13,7 @@ export default function HomePage() {
 				</p>
 			</header>
 
-			<nav className="mx-auto flex max-w-md flex-col gap-4 sm:flex-row sm:justify-center">
+			<nav className="mx-auto flex max-w-md flex-col gap-4 sm:flex-row sm:flex-wrap sm:justify-center">
 				<Link
 					href={ROUTES.SEARCH}
 					className="rounded-lg border border-gray-200 bg-white px-6 py-3 text-center font-medium transition hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-900 dark:hover:bg-gray-800"
@@ -25,6 +25,12 @@ export default function HomePage() {
 					className="rounded-lg bg-blue-600 px-6 py-3 text-center font-medium text-white transition hover:bg-blue-700"
 				>
 					Veri Paylaş
+				</Link>
+				<Link
+					href={ROUTES.UPDATE}
+					className="rounded-lg border border-gray-200 bg-white px-6 py-3 text-center font-medium transition hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-900 dark:hover:bg-gray-800"
+				>
+					Veri Güncelle
 				</Link>
 			</nav>
 		</main>

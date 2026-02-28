@@ -18,6 +18,7 @@
 3. Supabase'de migration ve seed çalıştırın:
    - Supabase Dashboard > SQL Editor
    - `supabase/migrations/20260228000000_initial_schema.sql` içeriğini çalıştırın
+   - `supabase/migrations/20260228200000_reference_code_update.sql` içeriğini çalıştırın
    - `supabase/seed.sql` içeriğini çalıştırın
 
 4. Geliştirme sunucusu:
@@ -38,6 +39,12 @@
 - `SSH_USER` – SSH kullanıcı adı
 - `SSH_PRIVATE_KEY` – SSH private key (tüm içerik)
 - `DEPLOY_PATH` – (opsiyonel) Proje dizini, varsayılan: `~/school-cost-index`
+- `DEPLOY_USE_DOCKER` – `true` ise `docker compose` ile deploy (varsayılan: PM2)
+
+**Migration (Supabase):**
+- `SUPABASE_ACCESS_TOKEN` – Supabase personal access token
+- `SUPABASE_PROJECT_REF` – Supabase proje referansı (dashboard URL’deki project-id)
+- `SUPABASE_DB_PASSWORD` – Supabase veritabanı şifresi (db push için gerekli)
 
 ### VDS İlk Kurulum
 
@@ -77,6 +84,18 @@
    - `deploy_key.pub` içeriğini VDS'de `~/.ssh/authorized_keys` dosyasına ekleyin
    - `deploy_key` (private) içeriğini GitHub Secrets → `SSH_PRIVATE_KEY` olarak ekleyin
 
+## Docker
+
+```bash
+# Build and run
+docker compose up -d
+
+# Or build only
+docker compose build
+```
+
+Proje kökündeki `.env` dosyasına `NEXT_PUBLIC_SUPABASE_URL` ve `NEXT_PUBLIC_SUPABASE_ANON_KEY` ekleyin (veya `.env.local` kopyalayın).
+
 ## Nginx
 
 `nginx/` klasöründe reverse proxy config'leri bulunur. Domain adını config dosyalarında güncellemeyi unutmayın.
@@ -93,4 +112,4 @@ Otomatik doğrulama sistemi sonraki aşamada eklenecektir.
 
 ## Referans Kodu
 
-Veri paylaşımı sonrası kullanıcıya verilen referans kodu ile veri güncelleme özelliği planlanmaktadır.
+Veri paylaşımı sonrası kullanıcıya verilen referans kodu ile `/update` sayfasından veri güncellenebilir.

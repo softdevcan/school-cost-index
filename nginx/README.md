@@ -1,5 +1,16 @@
 # Nginx Kurulum
 
+## Rate Limiting
+
+`rate-limit-zones.conf` submit ve update sayfaları için rate limit tanımlar. Ana config dosyaları bu dosyayı `include` ile yükler. Symlink ile `sites-enabled`'a alırken **nginx klasörünün tamamını** veya en azından `school-cost-index.conf` + `rate-limit-zones.conf` dosyalarının aynı dizinde olduğundan emin olun.
+
+- `/submit`: 5 istek/saniye, burst 5
+- `/update`: 3 istek/saniye, burst 3
+
+## Docker ile Kullanım
+
+Nginx aynı `nginx_network` üzerindeyse, upstream olarak `school-cost-index:3000` kullanın. `school-cost-index.docker.conf` içindeki upstream bloğunu ana config'e ekleyin veya `server` bloğunda `proxy_pass http://school-cost-index:3000` kullanın.
+
 ## 1. Domain'i Değiştirin
 
 `school-cost-index.conf` ve `school-cost-index.ssl.conf` dosyalarındaki `okul.softdevcan.site` ifadelerini kendi domain'inizle değiştirin.

@@ -5,4 +5,5 @@ export const ROUTES = {
 	HOME: '/',
 	SEARCH: '/search',
 	SUBMIT: '/submit',
+	UPDATE: '/update',
 } as const

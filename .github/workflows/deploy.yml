@@ -5,7 +5,27 @@ on:
     branches: [main]
 
 jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Run migrations
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+          supabase db push -p "$SUPABASE_DB_PASSWORD"
+
   deploy:
+    needs: migrate
     runs-on: ubuntu-latest
     steps:
       - name: Deploy via SSH
@@ -17,6 +37,11 @@ jobs:
           script: |
             cd ${{ secrets.DEPLOY_PATH || '~/school-cost-index' }}
             git pull origin main
-            npm ci
-            npm run build
-            pm2 restart school-cost-index || pm2 start ecosystem.config.cjs
+            if [ -f docker-compose.yml ] && [ "${{ secrets.DEPLOY_USE_DOCKER }}" = "true" ]; then
+              docker compose build --no-cache
+              docker compose up -d
+            else
+              npm ci
+              npm run build
+              pm2 restart school-cost-index || pm2 start ecosystem.config.cjs
+            fi
