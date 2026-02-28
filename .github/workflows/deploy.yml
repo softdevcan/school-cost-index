@@ -38,8 +38,13 @@ jobs:
             cd ${{ secrets.DEPLOY_PATH || '/srv/school-cost-index' }}
             git pull origin main
             if [ -f docker-compose.yml ] && [ "${{ secrets.DEPLOY_USE_DOCKER }}" = "true" ]; then
-              docker compose build --no-cache
-              docker compose up -d
+              if [ -f .env.local ]; then
+                docker compose --env-file .env.local build --no-cache
+                docker compose --env-file .env.local up -d
+              else
+                docker compose build --no-cache
+                docker compose up -d
+              fi
             else
               npm ci
               npm run build
